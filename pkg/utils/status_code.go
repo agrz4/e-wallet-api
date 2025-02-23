@@ -1,34 +1,34 @@
 package utils
 
 import (
-	"e-wallet-api-go/pkg/custom_error"
+	"e-wallet-api-go/pkg/customerror"
 	"net/http"
 )
 
 func GetStatusCode(err error) int {
 	var statusCode int = http.StatusInternalServerError
 
-	if _, ok := err.(*custom_error.NotValidEmailError); ok {
+	if _, ok := err.(*customerror.NotValidEmailError); ok {
 		statusCode = http.StatusUnprocessableEntity
-	} else if _, ok := err.(*custom_error.UserAlreadyExistsError); ok {
+	} else if _, ok := err.(*customerror.UserAlreadyExistError); ok {
 		statusCode = http.StatusConflict
-	} else if _, ok := err.(*custom_error.IncorrectCredentialsError); ok {
+	} else if _, ok := err.(*customerror.IncorrectCredentialsError); ok {
 		statusCode = http.StatusUnauthorized
-	} else if _, ok := err.(*custom_error.UserNotFoundError); ok {
+	} else if _, ok := err.(*customerror.UserNotFoundError); ok {
 		statusCode = http.StatusBadRequest
-	} else if _, ok := err.(*custom_error.PasswordNotSame); ok {
+	} else if _, ok := err.(*customerror.PasswordNotSame); ok {
 		statusCode = http.StatusUnprocessableEntity
-	} else if _, ok := err.(*custom_error.ResetTokenNotFound); ok {
+	} else if _, ok := err.(*customerror.ResetTokenNotFound); ok {
 		statusCode = http.StatusBadRequest
-	} else if _, ok := err.(*custom_error.SourceOfFundNotFoundError); ok {
+	} else if _, ok := err.(*customerror.SourceOfFundNotFoundError); ok {
 		statusCode = http.StatusBadRequest
-	} else if _, ok := err.(*custom_error.InsufficientBallanceError); ok {
+	} else if _, ok := err.(*customerror.InsufficientBalanceError); ok {
 		statusCode = http.StatusBadRequest
-	} else if _, ok := err.(*custom_error.WalletNotFoundError); ok {
+	} else if _, ok := err.(*customerror.WalletNotFoundError); ok {
 		statusCode = http.StatusBadRequest
-	} else if _, ok := err.(*custom_error.WalletAlreadyExistsError); ok {
+	} else if _, ok := err.(*customerror.WalletAlreadyExistsError); ok {
 		statusCode = http.StatusConflict
-	} else if _, ok := err.(*custom_error.TransferToSameWalletError); ok {
+	} else if _, ok := err.(*customerror.TransferToSameWalletError); ok {
 		statusCode = http.StatusBadRequest
 	}
 	return statusCode

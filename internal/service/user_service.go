@@ -3,6 +3,8 @@ package service
 import (
 	"e-wallet-api-go/internal/dto"
 	"e-wallet-api-go/internal/model"
+	r "e-wallet-api-go/internal/repository"
+	"e-wallet-api-go/pkg/customerror"
 	"net/mail"
 
 	"golang.org/x/crypto/bcrypt"
@@ -14,8 +16,8 @@ type UserService interface {
 }
 
 type userService struct {
-	UserRepository   r.UserRepository
-	WalletRepository r.WalletRepository
+	userRepository   r.UserRepository
+	walletRepository r.WalletRepository
 }
 
 type USConfig struct {
@@ -31,7 +33,7 @@ func NewUserService(c *USConfig) UserService {
 }
 
 func (s *userService) GetUser(input *dto.UserRequestParams) (*model.User, error) {
-	user, err := s.UserRepository.FindById(input.UserID)
+	user, err := s.userRepository.FindById(input.UserID)
 	if err != nil {
 		return user, err
 	}
@@ -41,7 +43,7 @@ func (s *userService) GetUser(input *dto.UserRequestParams) (*model.User, error)
 func (s *userService) CreateUser(input *dto.RegisterRequestBody) (*model.User, error) {
 	_, err := mail.ParseAddress(input.Email)
 	if err != nil {
-		return &model.User{}, &custom_error.NotValidEmailError{}
+		return &model.User{}, &customerror.NotValidEmailError{}
 	}
 
 	user, err := s.userRepository.FindByEmail(input.Email)
@@ -49,7 +51,7 @@ func (s *userService) CreateUser(input *dto.RegisterRequestBody) (*model.User, e
 		return user, err
 	}
 	if user.ID != 0 {
-		return user, &custom_error.UserAlreadyExistsError{}
+		return user, &customerror.UserAlreadyExistError{}
 	}
 
 	user.Name = input.Name
@@ -58,7 +60,6 @@ func (s *userService) CreateUser(input *dto.RegisterRequestBody) (*model.User, e
 	if err != nil {
 		return user, err
 	}
-
 	user.Password = string(passwordHash)
 
 	newUser, err := s.userRepository.Save(user)

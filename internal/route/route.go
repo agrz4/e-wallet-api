@@ -1,5 +1,7 @@
 package route
 
+import s "e-wallet-api-go/internal/service"
+
 type Router struct {
 	userService s.UserService
 	jwtService  s.JWTService

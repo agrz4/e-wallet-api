@@ -1,7 +1,11 @@
 package service
 
 import (
+	"e-wallet-api-go/internal/dto"
 	"e-wallet-api-go/internal/model"
+	r "e-wallet-api-go/internal/repository"
+	"e-wallet-api-go/pkg/customerror"
+	"e-wallet-api-go/pkg/utils"
 	"net/mail"
 	"time"
 
@@ -34,7 +38,7 @@ func NewAuthService(c *ASConfig) AuthService {
 func (s *authService) Attempt(input *dto.LoginRequestBody) (*model.User, error) {
 	_, err := mail.ParseAddress(input.Email)
 	if err != nil {
-		return &model.User{}, &custom_error.NotValidEmailError{}
+		return &model.User{}, &customerror.NotValidEmailError{}
 	}
 
 	user, err := s.userRepository.FindByEmail(input.Email)
@@ -43,12 +47,12 @@ func (s *authService) Attempt(input *dto.LoginRequestBody) (*model.User, error) 
 	}
 
 	if user.ID == 0 {
-		return user, &custom_error.UserNotFoundError{}
+		return user, &customerror.UserNotFoundError{}
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
 	if err != nil {
-		return user, &custom_error.IncorrectCredentialsError{}
+		return user, &customerror.IncorrectCredentialsError{}
 	}
 
 	return user, nil
@@ -57,7 +61,7 @@ func (s *authService) Attempt(input *dto.LoginRequestBody) (*model.User, error) 
 func (s *authService) ForgotPass(input *dto.ForgotPasswordRequestBody) (*model.PasswordReset, error) {
 	_, err := mail.ParseAddress(input.Email)
 	if err != nil {
-		return &model.PasswordReset{}, &custom_error.NotValidEmailError{}
+		return &model.PasswordReset{}, &customerror.NotValidEmailError{}
 	}
 
 	user, err := s.userRepository.FindByEmail(input.Email)
@@ -66,7 +70,7 @@ func (s *authService) ForgotPass(input *dto.ForgotPasswordRequestBody) (*model.P
 	}
 
 	if user.ID == 0 {
-		return &model.PasswordReset{}, &custom_error.UserNotFoundError{}
+		return &model.PasswordReset{}, &customerror.UserNotFoundError{}
 	}
 
 	passwordReset, err := s.passwordResetRepository.FindByUserId(int(user.ID))
@@ -95,11 +99,11 @@ func (s *authService) ResetPass(input *dto.ResetPasswordRequestBody) (*model.Pas
 	}
 
 	if passwordReset.User.Email == "" {
-		return passwordReset, &custom_error.ResetTokenNotFound{}
+		return passwordReset, &customerror.ResetTokenNotFound{}
 	}
 
 	if input.Password != input.ConfirmPassword {
-		return passwordReset, &custom_error.PasswordNotSame{}
+		return passwordReset, &customerror.PasswordNotSame{}
 	}
 
 	user := &passwordReset.User

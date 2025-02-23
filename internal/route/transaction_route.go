@@ -1,6 +1,11 @@
 package route
 
-import "github.com/gin-gonic/gin"
+import (
+	"e-wallet-api-go/internal/handler"
+	"e-wallet-api-go/internal/middleware"
+
+	"github.com/gin-gonic/gin"
+)
 
 func (r *Router) Transaction(route *gin.RouterGroup, h *handler.Handler) {
 	route.Use(middleware.AuthMiddleware(r.jwtService, r.userService))

@@ -13,6 +13,10 @@ type RegisterRequestBody struct {
 	Password string `json:"password" binding:"required,min=5"`
 }
 
+type ForgotPasswordRequestBody struct {
+	Email string `json:"email" binding:"required,email"`
+}
+
 type ResetPasswordRequestBody struct {
 	Token           string `json:"token" binding:"required"`
 	Password        string `json:"password" binding:"required,min=5"`

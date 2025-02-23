@@ -1,6 +1,10 @@
 package route
 
-import "github.com/gin-gonic/gin"
+import (
+	"e-wallet-api-go/internal/handler"
+
+	"github.com/gin-gonic/gin"
+)
 
 func (r *Router) Auth(route *gin.RouterGroup, h *handler.Handler) {
 	route.POST("/sign-up", h.Register)
