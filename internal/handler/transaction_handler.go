@@ -58,7 +58,6 @@ func (h *Handler) TopUp(c *gin.Context) {
 	user := c.MustGet("user").(*model.User)
 	input.User = user
 	transaction, err := h.transactionService.TopUp(input)
-
 	if err != nil {
 		statusCode := utils.GetStatusCode(err)
 		response := utils.ErrorResponse("top up failed", statusCode, err.Error())
